@@ -27,11 +27,6 @@ export const fornecedorSolucoes = pgTable("fornecedor_solucoes", {
   fornecedorId: serial("fornecedor_id").references(() => fornecedores.id),
   solucao: solucaoEnum("solucao").notNull(),
   custoKwh: numeric("custo_kwh", { precision: 8, scale: 4 }).notNull(),
-  consumoMinimoKwh: numeric("consumo_minimo_kwh", {
-    precision: 10,
-    scale: 2,
-  }).notNull(),
-  consumoMaximoKwh: numeric("consumo_maximo_kwh", { precision: 10, scale: 2 }),
 });
 
 export const fornecedorEstados = pgTable("fornecedor_estados", {
