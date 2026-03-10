@@ -1,7 +1,8 @@
 import {
   buscarFornecedoresComSolucoes,
   buscarTarifaBase,
-  buscarUfsDisponiveis,
+  buscarTodasUfsBrasil,
+  buscarTodosFornecedores,
   buscarUfsDoFornecedor,
 } from "../repositories/fornecedor.repository";
 
@@ -85,7 +86,7 @@ export async function listarFornecedores(
 }
 
 export async function listarUfsDisponiveis(): Promise<string[]> {
-  return buscarUfsDisponiveis();
+  return buscarTodasUfsBrasil();
 }
 
 export async function listarResumoSolucoes(
@@ -115,4 +116,42 @@ export async function listarResumoSolucoes(
       melhorFornecedor: nomeFornecedor,
     }),
   );
+}
+
+export async function listarTodosFornecedores(): Promise<
+  FornecedorComCalculo[]
+> {
+  const lista = await buscarTodosFornecedores();
+
+  const resultado = await Promise.all(
+    lista.map(async (f) => {
+      const ufsAtendidas = await buscarUfsDoFornecedor(f.id);
+
+      const solucoes: SolucaoComCalculo[] = f._solucoes.map((s: any) => ({
+        solucao: s.solucao,
+        custoKwh: Number(s.custoKwh),
+        consumoMinimoKwh: Number(s.consumoMinimoKwh),
+        consumoMaximoKwh: s.consumoMaximoKwh
+          ? Number(s.consumoMaximoKwh)
+          : null,
+        custoTotal: 0,
+        economia: 0,
+        economiaPercentual: 0,
+      }));
+
+      return {
+        id: f.id,
+        nome: f.nome,
+        logo: f.logo,
+        descricao: f.descricao,
+        estadoOrigem: f.estadoOrigem,
+        totalClientes: f.totalClientes,
+        avaliacaoMedia: Number(f.avaliacaoMedia),
+        solucoes,
+        ufsAtendidas,
+      };
+    }),
+  );
+
+  return resultado;
 }

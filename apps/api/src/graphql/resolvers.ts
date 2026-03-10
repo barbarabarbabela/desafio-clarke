@@ -2,6 +2,7 @@ import {
   listarFornecedores,
   listarUfsDisponiveis,
   listarResumoSolucoes,
+  listarTodosFornecedores,
 } from "../services/fornecedor.service";
 
 export const resolvers = {
@@ -17,5 +18,7 @@ export const resolvers = {
       _: any,
       { uf, consumoKwh }: { uf: string; consumoKwh: number },
     ) => listarResumoSolucoes(uf, consumoKwh),
+
+    todosFornecedores: () => listarTodosFornecedores(),
   },
 };

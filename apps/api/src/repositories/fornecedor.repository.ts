@@ -56,6 +56,27 @@ export async function buscarFornecedoresComSolucoes(
     .innerJoin(
       fornecedorSolucoes,
       eq(fornecedorSolucoes.fornecedorId, fornecedores.id),
+    )
+    .where(inArray(fornecedores.id, ids));
+
+  const mapa = new Map<number, any>();
+  for (const row of resultado) {
+    if (!mapa.has(row.fornecedor.id)) {
+      mapa.set(row.fornecedor.id, { ...row.fornecedor, _solucoes: [] });
+    }
+    mapa.get(row.fornecedor.id)._solucoes.push(row.solucao);
+  }
+
+  return Array.from(mapa.values());
+}
+
+export async function buscarTodosFornecedores() {
+  const resultado = await db
+    .select({ fornecedor: fornecedores, solucao: fornecedorSolucoes })
+    .from(fornecedores)
+    .innerJoin(
+      fornecedorSolucoes,
+      eq(fornecedorSolucoes.fornecedorId, fornecedores.id),
     );
 
   const mapa = new Map<number, any>();
@@ -67,4 +88,36 @@ export async function buscarFornecedoresComSolucoes(
   }
 
   return Array.from(mapa.values());
+}
+
+export async function buscarTodasUfsBrasil(): Promise<string[]> {
+  return [
+    "AC",
+    "AL",
+    "AP",
+    "AM",
+    "BA",
+    "CE",
+    "DF",
+    "ES",
+    "GO",
+    "MA",
+    "MT",
+    "MS",
+    "MG",
+    "PA",
+    "PB",
+    "PR",
+    "PE",
+    "PI",
+    "RJ",
+    "RN",
+    "RS",
+    "RO",
+    "RR",
+    "SC",
+    "SP",
+    "SE",
+    "TO",
+  ];
 }
