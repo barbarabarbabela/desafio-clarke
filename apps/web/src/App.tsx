@@ -11,7 +11,7 @@ import Partners from "./pages/partners";
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
-  link: new HttpLink({ uri: "http://localhost:3333/graphql" }),
+  link: new HttpLink({ uri: import.meta.env.VITE_API_URL }),
 });
 
 export default function App() {
