@@ -12,4 +12,4 @@ RUN npm run build
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npm run db:seed && node dist/server.js 2>&1"]
+CMD ["node", "dist/server.js"]
