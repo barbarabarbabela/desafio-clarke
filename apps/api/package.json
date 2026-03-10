@@ -6,7 +6,10 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "db:seed": "tsx src/db/seed.ts",
-    "db:push": "drizzle-kit push:pg"
+    "db:push": "drizzle-kit push:pg",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "fastify": "^4.26.2",

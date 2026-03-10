@@ -16,7 +16,6 @@ async function seed() {
   await db.delete(tarifasBase);
   console.log("🧹 Tabelas limpas");
 
-  // Tarifas base por estado (R$/kWh)
   await db.insert(tarifasBase).values([
     { uf: "SP", tarifaKwh: "0.8200" },
     { uf: "RJ", tarifaKwh: "0.9100" },
@@ -29,8 +28,17 @@ async function seed() {
   ]);
   console.log("✅ Tarifas base inseridas");
 
-  // Fornecedores
-  const [solarBr, energyPlus, voltaLivre, solNorte, ampereX] = await db
+  const [
+    solarBr,
+    energyPlus,
+    voltaLivre,
+    solNorte,
+    ampereX,
+    solarTech,
+    energiaVerde,
+    mercadoLivreBR,
+    verdeWatts,
+  ] = await db
     .insert(fornecedores)
     .values([
       {
@@ -74,57 +82,105 @@ async function seed() {
         totalClientes: 695,
         avaliacaoMedia: "4.20",
       },
+      {
+        nome: "SolarTech Energia",
+        logo: "https://placehold.co/100x40?text=SolarTech",
+        descricao: "Especialistas em geração distribuída solar.",
+        estadoOrigem: "SP",
+        totalClientes: 1200,
+        avaliacaoMedia: "4.70",
+      },
+      {
+        nome: "Energia Verde",
+        logo: "https://placehold.co/100x40?text=EnergiaVerde",
+        descricao: "Fornecimento de energia limpa para GD e Mercado Livre.",
+        estadoOrigem: "MG",
+        totalClientes: 850,
+        avaliacaoMedia: "4.50",
+      },
+      {
+        nome: "Mercado Livre BR",
+        logo: "https://placehold.co/100x40?text=MLBR",
+        descricao: "Soluções para grandes consumidores no Mercado Livre.",
+        estadoOrigem: "RJ",
+        totalClientes: 430,
+        avaliacaoMedia: "4.20",
+      },
+      {
+        nome: "Verde Watts",
+        logo: "https://placehold.co/100x40?text=VerdeWatts",
+        descricao: "Energia renovável com foco no Sul do Brasil.",
+        estadoOrigem: "RS",
+        totalClientes: 670,
+        avaliacaoMedia: "4.80",
+      },
     ])
     .returning();
   console.log("✅ Fornecedores inseridos");
 
-  // Soluções por fornecedor (custoKwh menor que a tarifa base = economia garantida)
   await db.insert(fornecedorSolucoes).values([
-    // SolarBR — GD em SP e MG
     { fornecedorId: solarBr.id, solucao: "GD", custoKwh: "0.6100" },
-    // EnergyPlus — GD e Mercado Livre
     { fornecedorId: energyPlus.id, solucao: "GD", custoKwh: "0.6400" },
     {
       fornecedorId: energyPlus.id,
       solucao: "MERCADO_LIVRE",
       custoKwh: "0.6900",
     },
-    // VoltaLivre — Mercado Livre no Sul
     {
       fornecedorId: voltaLivre.id,
       solucao: "MERCADO_LIVRE",
       custoKwh: "0.6200",
     },
-    // SolNorte — GD na BA e GO
     { fornecedorId: solNorte.id, solucao: "GD", custoKwh: "0.6600" },
-    // AmpereX — Mercado Livre no PR, SC e SP
     { fornecedorId: ampereX.id, solucao: "MERCADO_LIVRE", custoKwh: "0.6500" },
     { fornecedorId: ampereX.id, solucao: "GD", custoKwh: "0.6800" },
+    { fornecedorId: solarTech.id, solucao: "GD", custoKwh: "0.6000" },
+    { fornecedorId: energiaVerde.id, solucao: "GD", custoKwh: "0.6300" },
+    {
+      fornecedorId: energiaVerde.id,
+      solucao: "MERCADO_LIVRE",
+      custoKwh: "0.6700",
+    },
+    {
+      fornecedorId: mercadoLivreBR.id,
+      solucao: "MERCADO_LIVRE",
+      custoKwh: "0.6100",
+    },
+    { fornecedorId: verdeWatts.id, solucao: "GD", custoKwh: "0.5900" },
+    {
+      fornecedorId: verdeWatts.id,
+      solucao: "MERCADO_LIVRE",
+      custoKwh: "0.6300",
+    },
   ]);
   console.log("✅ Soluções inseridas");
 
-  // Estados atendidos por fornecedor
   await db.insert(fornecedorEstados).values([
-    // SolarBR
     { fornecedorId: solarBr.id, uf: "SP" },
     { fornecedorId: solarBr.id, uf: "MG" },
     { fornecedorId: solarBr.id, uf: "RJ" },
-    // EnergyPlus
     { fornecedorId: energyPlus.id, uf: "MG" },
     { fornecedorId: energyPlus.id, uf: "SP" },
     { fornecedorId: energyPlus.id, uf: "GO" },
-    // VoltaLivre
     { fornecedorId: voltaLivre.id, uf: "RS" },
     { fornecedorId: voltaLivre.id, uf: "SC" },
     { fornecedorId: voltaLivre.id, uf: "PR" },
-    // SolNorte
     { fornecedorId: solNorte.id, uf: "BA" },
     { fornecedorId: solNorte.id, uf: "GO" },
     { fornecedorId: solNorte.id, uf: "MG" },
-    // AmpereX
     { fornecedorId: ampereX.id, uf: "PR" },
     { fornecedorId: ampereX.id, uf: "SC" },
     { fornecedorId: ampereX.id, uf: "SP" },
+    { fornecedorId: solarTech.id, uf: "SP" },
+    { fornecedorId: solarTech.id, uf: "MG" },
+    { fornecedorId: solarTech.id, uf: "RJ" },
+    { fornecedorId: energiaVerde.id, uf: "MG" },
+    { fornecedorId: energiaVerde.id, uf: "GO" },
+    { fornecedorId: mercadoLivreBR.id, uf: "RJ" },
+    { fornecedorId: mercadoLivreBR.id, uf: "SP" },
+    { fornecedorId: verdeWatts.id, uf: "RS" },
+    { fornecedorId: verdeWatts.id, uf: "SC" },
+    { fornecedorId: verdeWatts.id, uf: "PR" },
   ]);
   console.log("✅ Estados inseridos");
 
