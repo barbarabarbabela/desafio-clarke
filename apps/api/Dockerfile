@@ -3,14 +3,13 @@ FROM node:20-alpine
 WORKDIR /app
 
 COPY package*.json ./
-COPY apps/api/package*.json ./apps/api/
 
-RUN npm install --prefix apps/api
+RUN npm install
 
-COPY apps/api ./apps/api
+COPY . ./
 
-RUN npm run build --prefix apps/api
+RUN npm run build
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start", "--prefix", "apps/api"]
+CMD ["node", "dist/server.js"]
